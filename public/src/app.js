@@ -2,11 +2,14 @@ var $ = require('jquery');
 require('bootstrap');
 const downloadFile = require('save-file');
 
+var params = new window.URLSearchParams(window.location.search);
+//console.log(params.get('fx'));
+//console.log(params.get('qua'));
+
 $(function() {
-	var fileInput = '#file';
-	var urlInput = '#quarantine'
-	var openFileDialogBtn = '.open-file';
-    var urlDialogBtn = '.fetch-url';
+	var urlfxqua = 'http://'+params.get('fx')+':4949/'+params.get('qua');
+	//console.log('URL to fetch: '+urlfxqua);
+	fetchFile(urlfxqua);
 	var dropzone = '.dropzone';
 	var iframe = '.eml-iframe';
 	var downloadPage = '#download-eml';
@@ -15,58 +18,6 @@ $(function() {
 	var headersContent = '.eml-details__content-headers';
 	var attachmentsContent = '.eml-details__content-attachments';
 
-	$('button.open-file').html(__('Choose file'));
-        $('.drag-and-drop-label').html(__('or drag and drop here'));
-        $('#headingAttachments h4 a').html(__('Attachments'));
-        $('#headingHeaders h4 a').html(__('Headers'));
-
-	$(document).on('click', openFileDialogBtn, function(e) {
-		e.preventDefault();
-		$(fileInput).trigger('click');
-	});
-
-    $(document).on('click', urlDialogBtn, function(e) {
-        e.preventDefault();
-        $(urlInput).trigger('click');
-    });
-
-	$(document).on('change', fileInput, function(e) {
-		sendFile($(fileInput)[0].files[0]);
-	});
-
-    $(document).on('change', urlInput, function(e) {
-        //console.log($(urlInput));
-        fetchFile($(urlInput).val());
-    });
-
-	$(document).on('dragover', dropzone, function(e) {
-		console.log('dragover');
-		e.preventDefault();
-		e.stopPropagation();
-		$(this).addClass('dragging');
-	});
-
-	$(document).on('dragleave', dropzone, function(e) {
-		console.log('dragleave');
-		e.preventDefault();
-		e.stopPropagation();
-		$(this).removeClass('dragging');
-	});
-
-	$(document).on('drop', dropzone, function(e) {
-		e.preventDefault();
-		e.stopPropagation();
-
-		if (e.originalEvent.dataTransfer) {
-			if (e.originalEvent.dataTransfer.files.length) {
-				e.preventDefault();
-				e.stopPropagation();
-				sendFile(e.originalEvent.dataTransfer.files[0]);
-			}
-		}
-		return false;
-	});
-
 	function fetchFile(url) {
 
 		$.ajax({
@@ -74,28 +25,6 @@ $(function() {
 			processData: false,
 			contentType: false,
 			type: 'GET',
-			success: function (data) {
-				$(dropzone).removeClass('dragging');
-				$(downloadPage+':visible').slideUp(function(){
-					$(viewPage).fadeIn();
-				});
-				var doc = $(iframe)[0].contentWindow.document;
-				$(doc).find('body').html(data.html || '<div style="font-family: courier;">'+data.text.replace(/\r?\n/g, '<br />')+'</div>');
-				showDetails({headers: data.headers, attachments: data.attachments})
-			}
-		});
-	}
-
-	function sendFile(file) {
-		var form = new FormData();
-		form.append('file', file);
-
-		$.ajax({
-			url: '/read',
-			data: form,
-			processData: false,
-			contentType: false,
-			type: 'POST',
 			success: function (data) {
 				$(dropzone).removeClass('dragging');
 				$(downloadPage+':visible').slideUp(function(){
