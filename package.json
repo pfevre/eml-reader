@@ -19,8 +19,12 @@
     "jquery": "^3.4.1",
     "mailparser": "^0.6.2",
     "multer": "^0.1.8",
+    "node-fetch": "^2.6.0",
     "save-file": "^2.3.1",
     "webpack": "^4.40.2",
     "webpack-cli": "^3.3.9"
+  },
+  "devDependencies": {
+    "request": "^2.88.2"
   }
 }

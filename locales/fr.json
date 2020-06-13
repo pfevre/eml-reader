@@ -1,0 +1,14 @@
+{
+    "Choose file": "Charger un mail",
+    "or drag and drop here": "Ou Glisser-déposer ici...",
+    "Headers": "Entêtes",
+    "Attachments": "Pièces jointes",
+    "No attachments": "Pas de pièces jointes",
+    "subject: ": "Objet: ",
+    "from: ": "Expéditeur: ",
+    "to: ": "Destinataire: ",
+    "cc: ": "Copie Carbone: ",
+    "date: ": "Date: ",
+    "download ": "Télécharger: ",
+    "This is not a valid eml-file. Please upload a new one!": "Ce fichier n'est pas au format EML valide. Essayez en un autre!"
+}

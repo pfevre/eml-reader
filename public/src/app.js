@@ -4,7 +4,9 @@ const downloadFile = require('save-file');
 
 $(function() {
 	var fileInput = '#file';
+	var urlInput = '#quarantine'
 	var openFileDialogBtn = '.open-file';
+    var urlDialogBtn = '.fetch-url';
 	var dropzone = '.dropzone';
 	var iframe = '.eml-iframe';
 	var downloadPage = '#download-eml';
@@ -23,9 +25,19 @@ $(function() {
 		$(fileInput).trigger('click');
 	});
 
+    $(document).on('click', urlDialogBtn, function(e) {
+        e.preventDefault();
+        $(urlInput).trigger('click');
+    });
+
 	$(document).on('change', fileInput, function(e) {
 		sendFile($(fileInput)[0].files[0]);
 	});
+
+    $(document).on('change', urlInput, function(e) {
+        //console.log($(urlInput));
+        fetchFile($(urlInput).val());
+    });
 
 	$(document).on('dragover', dropzone, function(e) {
 		console.log('dragover');
@@ -54,6 +66,25 @@ $(function() {
 		}
 		return false;
 	});
+
+	function fetchFile(url) {
+
+		$.ajax({
+			url: '/fetch?urlquarantine='+url,
+			processData: false,
+			contentType: false,
+			type: 'GET',
+			success: function (data) {
+				$(dropzone).removeClass('dragging');
+				$(downloadPage+':visible').slideUp(function(){
+					$(viewPage).fadeIn();
+				});
+				var doc = $(iframe)[0].contentWindow.document;
+				$(doc).find('body').html(data.html || '<div style="font-family: courier;">'+data.text.replace(/\r?\n/g, '<br />')+'</div>');
+				showDetails({headers: data.headers, attachments: data.attachments})
+			}
+		});
+	}
 
 	function sendFile(file) {
 		var form = new FormData();
